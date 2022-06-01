@@ -8,8 +8,8 @@ import './create_permission.css';
 
 const CreatePermissionPage = () => {
 
-    const [employyeName, setName] = useState('');
-    const [employyeLastName, setLastName] = useState('');
+    const [employeeName, setName] = useState('');
+    const [employeeLastName, setLastName] = useState('');
     const [permissionTypeSelect, setPermissionType] = useState(0);
     const [initLoad, setLoading] = useState(true);
     const { addPermission, response } = useService();
@@ -19,8 +19,8 @@ const CreatePermissionPage = () => {
     const savePermission = () => {
         setLoading(true);
         const permission = {
-            employeeName: employyeName,
-            employeeLastName: employyeLastName,
+            employeeName: employeeName,
+            employeeLastName: employeeLastName,
             permissionTypeId: permissionTypeSelect
         };
         addPermission(permission);
@@ -48,10 +48,10 @@ const CreatePermissionPage = () => {
     return (
         <div className="main-create">
             <FloatingLabel controlId="floatingInput" label="Employee Name" className="mb-3">
-                <Form.Control type="text" placeholder="name@example.com" className="form-control" value={employyeName} onChange={e => setName(e.target.value)} />
+                <Form.Control type="text" placeholder="name@example.com" className="form-control" value={employeeName} onChange={e => setName(e.target.value)} />
             </FloatingLabel>
             <FloatingLabel controlId="floatingPassword" label="Employee Last Name" >
-                <Form.Control type="text" placeholder="Password" className="form-control" value={employyeLastName} onChange={e => setLastName(e.target.value)} />
+                <Form.Control type="text" placeholder="Password" className="form-control" value={employeeLastName} onChange={e => setLastName(e.target.value)} />
             </FloatingLabel>
             <div className="div-button">
                 <Form.Select aria-label="Default select example" value={permissionTypeSelect} onChange={e => setPermissionType(Number.parseInt(e.target.value))}>
@@ -67,6 +67,5 @@ const CreatePermissionPage = () => {
         </div>
     );
 }
-
 
 export default CreatePermissionPage
