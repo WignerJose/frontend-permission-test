@@ -4,28 +4,30 @@ import { useAsync, useService } from "../../hooks/useAsync.hook";
 import useFetchAndLoad from "../../hooks/useFetchAndLoad";
 import { Permission } from "../../models/permission.model";
 import { getPermissionTypes } from "../../services/client_permission.service";
-import { useLocation,useHref } from "react-router-dom";
+import { useLocation, useHref } from "react-router-dom";
 import { PermissionType } from "../../models/permission_type.model";
 import './update_permission.css';
 
 export const UpdatePermissionPage = () => {
+    const { updatePermission, response } = useService();
+    const [responseTypes, setResponse] = useState([]);
+
     const [idPermission, setIdPermission] = useState(0);
     const [employyeName, setName] = useState('');
-    const [loading, setLoading] = useState(true);
-    const [disableButton, setDisableButton] = useState(false);
     const [employyeLastName, setLastName] = useState('');
     const [permissionTypeId, setPermissionType] = useState(0);
-    const { updatePermission, response } = useService();
 
+    const [loading, setLoading] = useState(true);
+    const [disableButton, setDisableButton] = useState(false);
     const location = useLocation();
     const data = location.state;
 
-    const setPermissionCurrent = () => {
+    const PermissionCurrent = () => {
         const dataString = JSON.stringify(data);
         const datObject = JSON.parse(dataString);
         adaptData(datObject);
         setLoading(false)
-        return (<></>);
+        return (<> <p>No hay datos a modificar</p> </>);
     }
 
     const adaptData = (data: Permission) => {
@@ -44,31 +46,30 @@ export const UpdatePermissionPage = () => {
         };
         updatePermission(idPermission, permission);
     }
-    const GetPermissionTypes = () => {
+    const InitPermissionType = () => {
         const { loading, callEndpoint } = useFetchAndLoad();
-        const [response, setResponse] = useState([]);
         const getApiData = async () => await callEndpoint(getPermissionTypes());
 
         const adaptResponse = (data: []) => {
             setResponse(data);
         }
         useAsync(getApiData, adaptResponse, () => { });
-        return (
-            <>
-                {loading ? 'LOADING' :
-                   response.map((permissionType:PermissionType,key)=> {
-                       return <option key={key} selected={permissionType.permissionTypeId == permissionTypeId ? true:false} value={permissionType.permissionTypeId}>{permissionType.description}</option>
-                   })
-                }
-            </>
+        return (<><option>No hay datos en la lista</option></>);
+    }
+    const LoadedPermissionTypes = () => {
+        return (<>{
+            responseTypes.map((permissionType: PermissionType, key) => {
+                return <option key={key} selected={permissionType.permissionTypeId == permissionTypeId ? true : false} 
+                        value={permissionType.permissionTypeId}>{permissionType.description}</option>
+            })}
+        </>
         );
     }
 
     return (
         <div className="main-update">
-            {response && <h1>Modificado</h1>}
             <div className="secundary-update">
-                {loading ? setPermissionCurrent() : <p>Datos a modificar</p>}
+                {loading ? <PermissionCurrent/> : <h3>Datos a modificar</h3>}
                 <div style={{ paddingTop: 20 }}>
                     <FloatingLabel controlId="floatingInput" label="Employee Name" className="mb-3">
                         <Form.Control type="text" placeholder="name@example.com" className="form-control" value={employyeName} onChange={e => setName(e.target.value)} />
@@ -78,15 +79,16 @@ export const UpdatePermissionPage = () => {
                     <Form.Control type="text" placeholder="Password" className="form-control" value={employyeLastName} onChange={e => setLastName(e.target.value)} />
                 </FloatingLabel>
                 <div className="secundary-update">
-                <Form.Select aria-label="Default select example" onChange={e=>setPermissionType(Number.parseInt(e.target.value))}>
-                    {<GetPermissionTypes/>}
-                </Form.Select>
+                    <Form.Select aria-label="Default select example" onChange={e => setPermissionType(Number.parseInt(e.target.value))}>
+                        {responseTypes.length > 0 ? <LoadedPermissionTypes /> : <InitPermissionType />}
+                    </Form.Select>
                 </div>
                 <div className="d-grid gap-2 secundary-update" >
                     <Button variant="primary" type="submit" size="sm" onClick={editPermission} disabled={disableButton}>
                         Update
                     </Button>
                 </div>
+                { response !=null? <h2> Datos actualizados</h2>: <></>}
             </div>
         </div>
     );
