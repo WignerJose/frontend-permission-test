@@ -26,7 +26,7 @@ const CreatePermissionPage = () => {
         addPermission(permission);
     }
 
-    const GetPermissionTypes = () => {
+    const InitPermissionTypes = () => {
         const getApiData = async () => await callEndpoint(getPermissionTypes());
         const adaptResponse = (data: []) => {
             setLoading(false);
@@ -36,7 +36,7 @@ const CreatePermissionPage = () => {
         return (<><option>No hay datos en la lista</option></>);
     }
 
-    const ListPermissionTypes = () => {
+    const LoadedPermissionTypes = () => {
         return (<>{
             responseTypes.map((permissionType: PermissionType, key) => {
                 return <option key={key} value={permissionType.permissionTypeId}>{permissionType.description}</option>
@@ -55,7 +55,7 @@ const CreatePermissionPage = () => {
             </FloatingLabel>
             <div className="div-button">
                 <Form.Select aria-label="Default select example" value={permissionTypeSelect} onChange={e => setPermissionType(Number.parseInt(e.target.value))}>
-                    {responseTypes.length > 0 ? <ListPermissionTypes /> : <GetPermissionTypes />}
+                    {responseTypes.length > 0 ? <LoadedPermissionTypes /> : <InitPermissionTypes />}
                 </Form.Select>
             </div>
             <div className="d-grid gap-2 div-button">
